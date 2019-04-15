@@ -113,4 +113,56 @@ public class Arrays {
         }
         return truthTable;
     }
+
+    public static <T> T[] getTruthElements(T array[], T element) {
+        Integer[] truthTable = arrayEquality(array, element);
+
+        List<T> result = new ArrayList<>();
+        int i = 0;
+        for (Integer value : truthTable) {
+            if (value == 1) {
+                result.add(array[i]);
+            }
+            i++;
+        }
+        return (T[]) result.toArray();
+    }
+
+    public static <T> T[] getTruthElements(T array[], Integer[] truthTable) {
+        List<T> result = new ArrayList<>();
+        int i = 0;
+        if (truthTable.length != array.length) {
+            throw new RuntimeException("Array length should be equals");
+        }
+        for (Integer value : truthTable) {
+            if (value == 1) {
+                result.add(array[i]);
+            }
+            i++;
+        }
+        return (T[]) result.toArray();
+    }
+
+    public static boolean isPure(Integer[] array) {
+        if (array == null) {
+            return true;
+        }
+        Set<Integer> set = new HashSet<>(java.util.Arrays.asList(array));
+        if (set.size() <= 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static <T> T[][] transposition(T[][] array) {
+        T[][] arrayT = (T[][]) new Object[array[0].length][array.length];
+
+        for (int i = 0; i < array[0].length; i++) {
+            for (int j = 0; j < array.length; j++) {
+                arrayT[i][j] = array[j][i];
+            }
+        }
+        return arrayT;
+    }
 }

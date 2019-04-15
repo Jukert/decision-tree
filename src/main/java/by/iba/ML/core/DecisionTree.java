@@ -8,13 +8,7 @@ import java.util.Map;
 
 public class DecisionTree {
 
-    private String[][] x = new String[][]{
-            {"q", "w", "e", "r"},
-            {"q", "r", "e", "r"},
-            {"q", "q", "e", "r"}
-    };
-
-    public double entropy(Object[] values) {
+    private double entropy(Object[] values) {
         double result = 0;
 
         Collection<Integer> countsUnique = Arrays.unique(values, true).values();
@@ -38,11 +32,37 @@ public class DecisionTree {
     }
 
 
-    public double mutualInformation(Integer[] y, Integer[] x) {
+    private double mutualInformation(Integer[] y, Integer[] x) {
 
         double result = entropy(y);
+        Map<Object, Integer> map = Arrays.unique(x, true);
 
+        for (Map.Entry<Object, Integer> entry : map.entrySet()) {
+            result -= ((double) entry.getValue() / (double) x.length) *
+                    entropy(Arrays.getTruthElements(y, Arrays.arrayEquality(x, entry.getKey())));
+        }
 
+        return result;
+    }
+
+    public Integer[] recusiveSplite(Integer[] x, Integer[] y) {
+
+        if (Arrays.isPure(y) || y.length == 0) {
+            return y;
+        }
+
+        return null;
+    }
+
+    private Double[] countGain(Integer[] y, Integer[][] transpX) {
+
+        Double[] gain = new Double[transpX.length];
+
+        for (int i = 0; i < transpX.length; i++) {
+            gain[i] = mutualInformation(y, transpX[i]);
+        }
+
+        return gain;
     }
 
 }
