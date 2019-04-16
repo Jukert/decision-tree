@@ -1,12 +1,15 @@
 package by.iba.ML.core;
 
+import by.iba.ML.common.TreeNode;
 import by.iba.ML.util.Arrays;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
-public class DecisionTree {
+public class DecisionTree<T> {
+
 
     private double entropy(Object[] values) {
         double result = 0;
@@ -22,16 +25,18 @@ public class DecisionTree {
         return result;
     }
 
-
+    //return map{ 'unique element' : array {nonzero[0] }}
+    //nonzero[0] - index i element, where element non zero elements
+    //nonzero[1] - j elements, where element non zero elements
     private <T> Map<T, Integer[]> partition(T[] array) {
-        HashMap<T, Integer[]> set = new HashMap<>();
+        HashMap<T, Integer[]> hashMap = new HashMap<>();
         for (Object element : Arrays.unique(array)) {
-            set.put((T) element, Arrays.nonezero(Arrays.arrayEquality(array, element))[0]);
+            hashMap.put((T) element, Arrays.nonzero(Arrays.arrayEquality(array, element))[1]);
         }
-        return set;
+        return hashMap;
     }
 
-
+    //return value (result = entropy(y) - (count unique value/ x.length)* entropy(truth elements)-.......... )
     private double mutualInformation(Integer[] y, Integer[] x) {
 
         double result = entropy(y);
@@ -45,21 +50,34 @@ public class DecisionTree {
         return result;
     }
 
-    public Integer[] recusiveSplite(Integer[] x, Integer[] y) {
+    public TreeNode recursiveSplite(Integer[][] x, Integer[] y, TreeNode<T> node) {
 
         if (Arrays.isPure(y) || y.length == 0) {
-            return y;
+            node.setValues((T[]) y);
+            return node;
         }
 
-        return null;
+        Double gain[] = countGain(y, x);
+        int selectedAttr = Arrays.getMaxElementIndex(gain);
+        Map<Object, Integer[]> partition = partition(Arrays.getColumn(x, selectedAttr, Integer.class));
+
+        for (Map.Entry<Object, Integer[]> entry : partition.entrySet()) {
+            Integer[][] xSubset = Arrays.take(x, entry.getValue());
+            Integer[] ySubset = Arrays.take(y, entry.getValue());
+
+            Map<String, TreeNode> map = new TreeMap<>();
+            map.put("x_" + selectedAttr + "=" + entry.getKey(), recursiveSplite(xSubset, ySubset, new TreeNode<>()));
+            node.setMap(map);
+        }
+        return node;
     }
 
-    private Double[] countGain(Integer[] y, Integer[][] transpX) {
+    private Double[] countGain(Integer[] y, Integer[][] x) {
 
-        Double[] gain = new Double[transpX.length];
-
-        for (int i = 0; i < transpX.length; i++) {
-            gain[i] = mutualInformation(y, transpX[i]);
+        Double[] gain = new Double[x[0].length];
+        x = Arrays.transposition(x, Integer.class);
+        for (int i = 0; i < x.length; i++) {
+            gain[i] = mutualInformation(y, x[i]);
         }
 
         return gain;

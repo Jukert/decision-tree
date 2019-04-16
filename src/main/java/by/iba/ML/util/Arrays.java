@@ -1,10 +1,11 @@
 package by.iba.ML.util;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Arrays {
 
-    public static <T> Integer[][] nonezero(T[][] array) {
+    public static <T> Integer[][] nonzero(T[][] array) {
         List<List<Integer>> listResult = new ArrayList<>();
         listResult.add(new ArrayList<>());
         listResult.add(new ArrayList<>());
@@ -29,10 +30,10 @@ public class Arrays {
         return result;
     }
 
-    public static <T> Integer[][] nonezero(T[] array) {
+    public static <T> Integer[][] nonzero(T[] array) {
         List<List<Integer>> listResult = new ArrayList<>();
-        listResult.add(new ArrayList<>());
-        listResult.add(new ArrayList<>());
+        listResult.add(new ArrayList<>());//index array, having non zero elements
+        listResult.add(new ArrayList<>());//index elements in array, having non zero elements
         int i = 0;
         for (T element : array) {
             if (element.equals(0)) {
@@ -114,7 +115,7 @@ public class Arrays {
         return truthTable;
     }
 
-    public static <T> T[] getTruthElements(T array[], T element) {
+    public static <T> T[] getTruthElements(T[] array, T element) {
         Integer[] truthTable = arrayEquality(array, element);
 
         List<T> result = new ArrayList<>();
@@ -128,7 +129,7 @@ public class Arrays {
         return (T[]) result.toArray();
     }
 
-    public static <T> T[] getTruthElements(T array[], Integer[] truthTable) {
+    public static <T> T[] getTruthElements(T[] array, Integer[] truthTable) {
         List<T> result = new ArrayList<>();
         int i = 0;
         if (truthTable.length != array.length) {
@@ -148,21 +149,68 @@ public class Arrays {
             return true;
         }
         Set<Integer> set = new HashSet<>(java.util.Arrays.asList(array));
-        if (set.size() <= 1) {
-            return true;
-        }
+        return set.size() <= 1;
 
-        return false;
     }
 
-    public static <T> T[][] transposition(T[][] array) {
-        T[][] arrayT = (T[][]) new Object[array[0].length][array.length];
+    public static <T> T[][] transposition(T[][] array, Class<?> clazz) {
+        T[][] arrayT = (T[][]) Array.newInstance(clazz, array[0].length, array.length);
 
         for (int i = 0; i < array[0].length; i++) {
             for (int j = 0; j < array.length; j++) {
-                arrayT[i][j] = array[j][i];
+                arrayT[i][j] = (T) array[j][i];
             }
         }
         return arrayT;
     }
+
+    public static <T extends Number> int getMaxElementIndex(T[] array) {
+
+        T max = array[0];
+        int index = 0;
+        for (int i = 0; i < array.length; i++) {
+            if ((Double) max < (Double) array[i]) {
+                max = array[i];
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    public static <T> Integer[][] take(T[][] array, Integer[] arraySet) {
+
+        Set<Integer> set = new HashSet<>(java.util.Arrays.asList(arraySet));
+        Integer[][] result = new Integer[set.size()][array[0].length];
+        for (int i = 0; i < set.size(); i++) {
+            Integer[] tempColumn = new Integer[array[0].length];
+            for (int j = 0; j < array[0].length; j++) {
+                tempColumn[j] = (Integer) array[i][j];
+            }
+            result[i] = tempColumn;
+        }
+
+        return result;
+    }
+
+    public static <T> Integer[] take(T[] array, Integer[] set) {
+
+        Integer result[] = new Integer[set.length];
+
+        for (int i = 0; i < set.length; i++) {
+            result[i] = (Integer) array[i];
+        }
+
+        return result;
+    }
+
+    public static <T> T[] getColumn(T[][] array, int index, Class<?> clazz) {
+        T[] column = (T[]) Array.newInstance(clazz, array.length);
+        int i = 0;
+        for (T el[] : array) {
+            column[i] = el[index];
+            i++;
+        }
+        return column;
+    }
 }
+
