@@ -37,4 +37,12 @@ public class TreeNode<T> {
     public void setValues(T[] values) {
         this.values = values;
     }
+
+    @Override
+    public String toString() {
+        return "TreeNode{" +
+                "map=" + map +
+                ", values=" + Arrays.toString(values) +
+                '}';
+    }
 }

@@ -197,7 +197,7 @@ public class Arrays {
         Integer result[] = new Integer[set.length];
 
         for (int i = 0; i < set.length; i++) {
-            result[i] = (Integer) array[i];
+            result[i] = (Integer) array[set[i]];
         }
 
         return result;

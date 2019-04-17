@@ -61,13 +61,15 @@ public class DecisionTree<T> {
         int selectedAttr = Arrays.getMaxElementIndex(gain);
         Map<Object, Integer[]> partition = partition(Arrays.getColumn(x, selectedAttr, Integer.class));
 
+        Map<String, TreeNode> map = new TreeMap<>();
         for (Map.Entry<Object, Integer[]> entry : partition.entrySet()) {
             Integer[][] xSubset = Arrays.take(x, entry.getValue());
             Integer[] ySubset = Arrays.take(y, entry.getValue());
 
-            Map<String, TreeNode> map = new TreeMap<>();
-            map.put("x_" + selectedAttr + "=" + entry.getKey(), recursiveSplite(xSubset, ySubset, new TreeNode<>()));
+            TreeNode treeNode = new TreeNode();
+            map.put("x_" + selectedAttr + "=" + entry.getKey(), treeNode);
             node.setMap(map);
+            recursiveSplite(xSubset, ySubset, treeNode);
         }
         return node;
     }

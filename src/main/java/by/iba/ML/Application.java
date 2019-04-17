@@ -24,6 +24,6 @@ public class Application {
 
         TreeNode treeNode = new TreeNode();
         tree.recursiveSplite(Arrays.transposition(X, Integer.class), y, treeNode);
-        System.out.println();
+        System.out.println(treeNode);
     }
 }
